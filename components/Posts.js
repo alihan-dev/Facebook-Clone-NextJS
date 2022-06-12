@@ -1,7 +1,7 @@
 // Necessary Imports
 import { useEffect, useState } from "react";
 import { db } from "../firebase";
-import { collection, onSnapshot, where } from "firebase/firestore";
+import { collection, onSnapshot, where, query, orderBy } from "firebase/firestore";
 import Post from "./Post";
 import { useSession } from "next-auth/react"
 
@@ -10,7 +10,10 @@ export default function Posts() {
   const [data, setData] = useState([]);
   useEffect(
           () =>
-              onSnapshot(collection(db, "posts"), where("name", "==", session.user.name), (snapshot) => {
+              onSnapshot(query(collection(db, "posts"),
+              where("name", "==", session.user.name),
+              orderBy('timestamp', 'desc')
+              ), (snapshot) => {
                   setData(
                       snapshot.docs.map((doc) => {
                           return { ...doc.data(), id: doc.id };
@@ -18,8 +21,6 @@ export default function Posts() {
                   );
               }),
       []);
-  
-  console.log(data)
   return (
     <div>
      {data?.map((post) => (

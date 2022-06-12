@@ -4,9 +4,9 @@ import { EmojiHappyIcon } from "@heroicons/react/outline"
 import { CameraIcon, VideoCameraIcon } from "@heroicons/react/solid"
 import { useRef } from "react";
 import { db, storage } from "../firebase";
-import { doc, setDoc, collection, addDoc } from "firebase/firestore"; 
+import { doc, setDoc, collection, addDoc, serverTimestamp } from "firebase/firestore"; 
 import { useState } from "react";
-import { ref, getDownloadURL, uploadBytesResumable, uploadString, uploadBytes, updateDoc } from "firebase/storage";
+import { ref, getDownloadURL, uploadString } from "firebase/storage";
 
 
 export default function InputBox() {
@@ -24,7 +24,8 @@ export default function InputBox() {
         message:inputRef.current.value,
         name: session.user.name,
         email: session.user.email,
-        image: session.user.image,
+        image: null,
+        timestamp: serverTimestamp()
     }).then(data => {
         if (imageToPost) {
             const imageRef = ref(storage, `posts/${data.id}`);
